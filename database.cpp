@@ -56,14 +56,49 @@ QStringList Database::returnSamples()
     close();
     return output;
 }
+int Database::getTempID(QString temp){
+    connect();
+    QSqlQuery query;
+    query.prepare("SELECT idTemperatures from Temperatures where temperature=?");
+    query.addBindValue(temp);
+    query.exec();
+    while(query.next()){
+        int id = query.value(0).toInt();
+        query.finish();
+        close();
+        return id;
+    }
+    query.finish();
+    close();
+    return -1;
+}
 int Database::getSampleID(QString compoundName)
 {
     connect();
     QSqlQuery query;
     query.prepare("SELECT idSamples from Samples where SampleName=?");
-    query.bindValue(compoundName);
+    query.addBindValue(compoundName);
     query.exec();
-    return query.value(0).toInt();
+    while(query.next()){
+        int id = query.value(0).toInt();    connect();
+        QSqlQuery query;
+        query.prepare("SELECT idSamples from Samples where SampleName=?");
+        query.addBindValue(compoundName);
+        query.exec();
+        while(query.next()){
+            int id = query.value(0).toInt();
+            close();
+            return id;
+        }
+        close();
+        return -1;
+        query.finish();
+        close();
+        return id;
+    }
+    query.finish();
+    close();
+    return -1;
 }
 bool Database::insertData(dataPoint *dP)
 {
@@ -73,21 +108,36 @@ bool Database::insertData(dataPoint *dP)
     //if it exists use the ID to map the raw data to trial.
     //if it doesn't create new trial and use that ID.
     int sampleID = getSampleID(dP->compound);
+    int tempID = getTempID(dP->temperature);
+    int trialID = 0;
     QSqlQuery checkTrial(db);
     checkTrial.prepare("SELECT idtrial from trial where replicantID=? AND sampleID=? and temperatureID=?");
-    checkTrial.bindValue(dP->trial);
-    checkTrial.bindValue(sampleID);
-    checkTrial.bindValue(dP->temperature);
+    checkTrial.addBindValue(dP->trial);
+    checkTrial.addBindValue(sampleID);
+    checkTrial.addBindValue(tempID);
     checkTrial.exec();
-    if(checkTrial.value(0)>0){
-
+    if(!checkTrial.first()){
+        //insert trial and return id.
+        QSqlQuery insertTrial(db);
+        insertTrial.prepare("INSERT INTO trial(replicantID,sampleID,temperatureID)values(?,?,?);");
+        insertTrial.addBindValue(dP->trial);
+        insertTrial.addBindValue(sampleID);
+        insertTrial.addBindValue(tempID);
+        insertTrial.exec();
+        trialID = insertTrial.lastInsertId();
+        insertTrial.finish();
+    }else{
+        trialID = checkTrial.value(0).toInt();
+        checkTrial.finish();
     }
+    checkTrial.finish();
+    //qDebug()<<checkTrial.first();
 
     QSqlQuery query(db);
 
     //insert raw data
     query.prepare("INSERT INTO `mydb`.`data` (`trialID`, `rxntemp`, `rxnTime`, `rxnheatFlow`, `rxnrevCP`, `rxnarea`) VALUES (?, ?, ?, ?, ?, ?);");
-    query.addBindValue(dP->trial);
+    query.addBindValue(trialID);
     query.addBindValue(dP->rxnTemp);
     query.addBindValue(dP->rxnTime);
     query.addBindValue(dP->rxnHeat);
