@@ -18,6 +18,7 @@ public:
     QStringList returnSamples();
     int getSampleID(QString compoundName);
     int getTempID(int temp);
+    float calculateAvg(int sampleID, int temp, int areaVal);
 private:
     QString username="root";
     QString password="averill";
