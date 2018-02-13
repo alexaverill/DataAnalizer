@@ -17,6 +17,7 @@ public:
     QStringList returnTemperatures();
     QStringList returnSamples();
     int getSampleID(QString compoundName);
+    int getTempID(int temp);
 private:
     QString username="root";
     QString password="averill";

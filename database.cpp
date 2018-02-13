@@ -56,8 +56,8 @@ QStringList Database::returnSamples()
     close();
     return output;
 }
-int Database::getTempID(QString temp){
-    connect();
+int Database::getTempID(int temp){
+    //connect();
     QSqlQuery query;
     query.prepare("SELECT idTemperatures from Temperatures where temperature=?");
     query.addBindValue(temp);
@@ -65,39 +65,26 @@ int Database::getTempID(QString temp){
     while(query.next()){
         int id = query.value(0).toInt();
         query.finish();
-        close();
+     //   close();
         return id;
     }
     query.finish();
-    close();
+   // close();
     return -1;
 }
 int Database::getSampleID(QString compoundName)
 {
-    connect();
+    //connect();
     QSqlQuery query;
     query.prepare("SELECT idSamples from Samples where SampleName=?");
     query.addBindValue(compoundName);
     query.exec();
     while(query.next()){
-        int id = query.value(0).toInt();    connect();
-        QSqlQuery query;
-        query.prepare("SELECT idSamples from Samples where SampleName=?");
-        query.addBindValue(compoundName);
-        query.exec();
-        while(query.next()){
-            int id = query.value(0).toInt();
-            close();
-            return id;
-        }
-        close();
-        return -1;
+        int id = query.value(0).toInt();
         query.finish();
-        close();
         return id;
     }
     query.finish();
-    close();
     return -1;
 }
 bool Database::insertData(dataPoint *dP)
@@ -124,7 +111,7 @@ bool Database::insertData(dataPoint *dP)
         insertTrial.addBindValue(sampleID);
         insertTrial.addBindValue(tempID);
         insertTrial.exec();
-        trialID = insertTrial.lastInsertId();
+        trialID = insertTrial.lastInsertId().toInt();
         insertTrial.finish();
     }else{
         trialID = checkTrial.value(0).toInt();
@@ -132,7 +119,9 @@ bool Database::insertData(dataPoint *dP)
     }
     checkTrial.finish();
     //qDebug()<<checkTrial.first();
-
+    if(trialID <=0 ){
+        return false;
+    }
     QSqlQuery query(db);
 
     //insert raw data
@@ -144,8 +133,16 @@ bool Database::insertData(dataPoint *dP)
     query.addBindValue(dP->rxnRevCP);
     query.addBindValue(dP->rxnArea);
     query.exec();
-    qDebug()<< query.lastError();
+    //qDebug()<< query.lastError();
     query.finish();
     close();
 }
 
+float Database::calculateAvg(int sampleID,int temp,int areaVal)
+{
+    /*SQL query to get average when given a sample, a temperature and then loop through to get values at each step.
+     *
+     * select AVG(rxnTime) from mydb.data where trialID in
+     *  (select idTrial from mydb.trial where sampleID=1 and temperatureID=1) and rxnArea=4;
+     * */
+}

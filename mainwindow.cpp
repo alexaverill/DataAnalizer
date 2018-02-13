@@ -73,6 +73,7 @@ void MainWindow::on_trialEntryBox_activated(int index)
 void MainWindow::on_selectFile_clicked()
 {
   this->fileIn = QFileDialog::getOpenFileName(this,tr("Open File"),"");
+  ui->fileNameDisp->setText(fileIn);
 }
 
 void MainWindow::on_sampleEntryBox_currentTextChanged(const QString &arg1)

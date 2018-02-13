@@ -105,11 +105,18 @@
         </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="selectFile">
-         <property name="text">
-          <string>Open File</string>
-         </property>
-        </widget>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QPushButton" name="selectFile">
+           <property name="text">
+            <string>Open File</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit"/>
+         </item>
+        </layout>
        </item>
        <item>
         <widget class="QPushButton" name="processData">

@@ -56,7 +56,7 @@ void Data::processFile(dataPoint *dP)
                 dP->rxnTemp = splitList.at(1).toFloat();
                 dP->rxnHeat = splitList.at(2).toFloat();
                 dP->rxnRevCP = splitList.at(3).toFloat();
-                dP->rxnArea = inVal;
+                dP->rxnArea = (int) target;
                 Database db;
                 db.insertData(dP);
                 place+=2;
