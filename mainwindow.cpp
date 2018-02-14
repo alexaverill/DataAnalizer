@@ -25,12 +25,14 @@ void MainWindow::setupTempDropBox()
     Database db;
    QStringList temps = db.returnTemperatures();
    ui->tempEntryBox->addItems(temps);
+   ui->tempView->addItems(temps);
 }
 void MainWindow::setupSamplesBox()
 {
     Database db;
     QStringList samples = db.returnSamples();
     ui->sampleEntryBox->addItems(samples);
+    ui->compoundView->addItems(samples);
 }
 void MainWindow::setupTrialDropbox()
 {

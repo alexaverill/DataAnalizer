@@ -8,8 +8,12 @@
 Database::Database()
 {
     //eventually load from config file.
-
+    connect();
 }
+/*Database::~Database()
+{
+    this->close();
+}*/
 bool Database::connect()
 {
     db = QSqlDatabase::addDatabase("QMYSQL");
@@ -30,66 +34,68 @@ void Database::close()
 
 std::stack<QString> Database::returnTrials()
 {
-    connect();
+    //connect();
     //QSqlQuery query("Select ";
     close();
+    std::stack<QString> rtn;
+    return rtn;
 }
 QStringList Database::returnTemperatures()
 {
     QStringList output;
-    connect();
+    //connect();
     QSqlQuery query("Select * from mydb.Temperatures;");
     while(query.next()){
         output.append(query.value(1).toString());
     }
-    close();
+    //close();
     return output;
 }
 QStringList Database::returnSamples()
 {
     QStringList output;
-    connect();
+    //connect();
     QSqlQuery query("Select * from mydb.Samples;");
     while(query.next()){
         output.append(query.value(1).toString());
     }
-    close();
+    //close();
     return output;
 }
 int Database::getTempID(int temp){
     //connect();
-    QSqlQuery query;
-    query.prepare("SELECT idTemperatures from Temperatures where temperature=?");
-    query.addBindValue(temp);
-    query.exec();
-    while(query.next()){
-        int id = query.value(0).toInt();
-        query.finish();
+    QSqlQuery tempq;
+   tempq.prepare("SELECT idTemperatures from Temperatures where temperature=?");
+    tempq.addBindValue(temp);
+    tempq.exec();
+    while(tempq.next()){
+        int id = tempq.value(0).toInt();
+        tempq.finish();
      //   close();
         return id;
     }
-    query.finish();
+    tempq.finish();
    // close();
     return -1;
 }
 int Database::getSampleID(QString compoundName)
 {
     //connect();
-    QSqlQuery query;
-    query.prepare("SELECT idSamples from Samples where SampleName=?");
-    query.addBindValue(compoundName);
-    query.exec();
-    while(query.next()){
-        int id = query.value(0).toInt();
-        query.finish();
+    QSqlQuery sample;
+    sample.prepare("SELECT idSamples from Samples where SampleName=?");
+    sample.addBindValue(compoundName);
+    sample.exec();
+    while(sample.next()){
+        int id = sample.value(0).toInt();
+        sample.finish();
         return id;
     }
-    query.finish();
+    sample.finish();
     return -1;
 }
 bool Database::insertData(dataPoint *dP)
 {
-    connect();
+    //connect();
     //start by checking to see if trial exists
     // trial has trial ID, Trial TEMP and sample
     //if it exists use the ID to map the raw data to trial.
@@ -103,6 +109,7 @@ bool Database::insertData(dataPoint *dP)
     checkTrial.addBindValue(sampleID);
     checkTrial.addBindValue(tempID);
     checkTrial.exec();
+            qDebug()<<checkTrial.first();
     if(!checkTrial.first()){
         //insert trial and return id.
         QSqlQuery insertTrial(db);
@@ -117,8 +124,9 @@ bool Database::insertData(dataPoint *dP)
         trialID = checkTrial.value(0).toInt();
         checkTrial.finish();
     }
+
     checkTrial.finish();
-    //qDebug()<<checkTrial.first();
+
     if(trialID <=0 ){
         return false;
     }
@@ -133,7 +141,7 @@ bool Database::insertData(dataPoint *dP)
     query.addBindValue(dP->rxnRevCP);
     query.addBindValue(dP->rxnArea);
     query.exec();
-    //qDebug()<< query.lastError();
+    qDebug()<< query.lastError();
     query.finish();
     close();
 }
@@ -145,4 +153,5 @@ float Database::calculateAvg(int sampleID,int temp,int areaVal)
      * select AVG(rxnTime) from mydb.data where trialID in
      *  (select idTrial from mydb.trial where sampleID=1 and temperatureID=1) and rxnArea=4;
      * */
+    return 0;
 }

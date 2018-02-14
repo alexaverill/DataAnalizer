@@ -12,6 +12,8 @@ struct dataPoint
     float rxnHeat;
     float rxnRevCP;
     int rxnArea;
+    float ln;
+    float T;
 
 };
 

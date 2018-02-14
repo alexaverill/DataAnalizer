@@ -21,6 +21,7 @@ void Data::setFile(QString fileIn)
 }
 void Data::processFile(dataPoint *dP)
 {
+    Database db;
     QFile file(filePath);
     if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
     {
@@ -57,7 +58,10 @@ void Data::processFile(dataPoint *dP)
                 dP->rxnHeat = splitList.at(2).toFloat();
                 dP->rxnRevCP = splitList.at(3).toFloat();
                 dP->rxnArea = (int) target;
-                Database db;
+                dP->ln = qLn(dP->rxnTime);
+                dP->T = 1/dP->rxnTemp;
+
+
                 db.insertData(dP);
                 place+=2;
             }
@@ -67,5 +71,7 @@ void Data::processFile(dataPoint *dP)
             header = false;
         }
     }
+    db.close();
+   // db.~Database();
     //qDebug() << dP->trial;
 }
