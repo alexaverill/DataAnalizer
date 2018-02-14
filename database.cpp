@@ -105,15 +105,16 @@ bool Database::insertData(dataPoint *dP)
     int trialID = 0;
     QSqlQuery checkTrial(db);
     checkTrial.prepare("SELECT idtrial from trial where replicantID=? AND sampleID=? and temperatureID=?");
+    //qDebug() << dP->trial << sampleID << tempID;
     checkTrial.addBindValue(dP->trial);
     checkTrial.addBindValue(sampleID);
     checkTrial.addBindValue(tempID);
     checkTrial.exec();
-            qDebug()<<checkTrial.first();
     if(!checkTrial.first()){
         //insert trial and return id.
         QSqlQuery insertTrial(db);
         insertTrial.prepare("INSERT INTO trial(replicantID,sampleID,temperatureID)values(?,?,?);");
+        qDebug() << dP->trial << sampleID << tempID;
         insertTrial.addBindValue(dP->trial);
         insertTrial.addBindValue(sampleID);
         insertTrial.addBindValue(tempID);
