@@ -6,11 +6,21 @@
 #include<QFileDialog>
 #include<stack>
 #include<QDebug>
+#include "localsetting.h"
+#include<QSettings>
+#include "settings.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    //loat in settings.
+    QSettings settings("Data", "Data");
+    localsettings ls;
+    ls.setUserName(settings.value("username").toString());
+    ls.setPassword(settings.value("password").toString());
+    ls.setDatabaseName(settings.value("databaseName").toString());
+    ls.setHostName(settings.value("host").toString());
     ui->setupUi(this);
     setupTempDropBox();
     setupSamplesBox();
@@ -81,4 +91,30 @@ void MainWindow::on_selectFile_clicked()
 void MainWindow::on_sampleEntryBox_currentTextChanged(const QString &arg1)
 {
 
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    Database d;
+    d.setStdDev();
+}
+
+void MainWindow::on_ExportCSV_clicked()
+{
+    this->fileOut = QFileDialog::getSaveFileName(this,tr("Export to CSV"),"",tr("CSV (.csv)"));
+    int rxnArea=ui->areaBox->value();
+    QString sample= ui->compoundView->currentText();
+    int temp =ui->tempView->currentText().toInt();
+    Database d;
+    //d.generalExport(fileOut);
+    d.specificExport(fileOut,sample,rxnArea,temp);
+    //check rest of form.
+    //then call appropriate export function
+}
+
+
+void MainWindow::on_settings_clicked()
+{
+    settings set;
+    set.exec();
 }

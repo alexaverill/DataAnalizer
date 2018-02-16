@@ -28,15 +28,19 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     data.cpp \
-    database.cpp
+    database.cpp \
+    settings.cpp
 
 HEADERS += \
         mainwindow.h \
     data.h \
     database.h \
-    datapoint.h
+    datapoint.h \
+    settings.h \
+    localsetting.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    settings.ui
 INCLUDEPATH += /usr/include/mysql \
             /home/aaverill/Qt/5.10.0/gcc_64/plugins/sqldrivers/

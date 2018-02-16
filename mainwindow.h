@@ -39,6 +39,12 @@ private slots:
 
     void on_sampleEntryBox_currentTextChanged(const QString &arg1);
 
+    void on_pushButton_2_clicked();
+
+    void on_ExportCSV_clicked();
+
+    void on_settings_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

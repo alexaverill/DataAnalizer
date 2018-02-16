@@ -21,12 +21,13 @@ public:
     int getTempID(int temp);
     float calculateAvg(int sampleID, int temp, int areaVal);
 
-private:
-    QString username="root";
-    QString password="averill";
-    QString host="localhost";
-    QString databaseName="mydb";
+    QList<int> returnTempID();
+    QList<int> returnSampleID();
+    void setStdDev();
+    void generalExport(QString fileName);
 
+    void specificExport(QString fileName, QString SampleName, int rxnArea, int temp);
+private:
     QSqlDatabase db;
     bool dbOpen = false;
 };

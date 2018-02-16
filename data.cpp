@@ -59,8 +59,7 @@ void Data::processFile(dataPoint *dP)
                 dP->rxnRevCP = splitList.at(3).toFloat();
                 dP->rxnArea = (int) target;
                 dP->ln = qLn(dP->rxnTime);
-                dP->T = 1/dP->rxnTemp;
-
+                dP->T = (1/dP->rxnTemp);
 
                 db.insertData(dP);
                 place+=2;
@@ -71,7 +70,7 @@ void Data::processFile(dataPoint *dP)
             header = false;
         }
     }
-    db.close();
+    //db.close();
    // db.~Database();
     //qDebug() << dP->trial;
 }
