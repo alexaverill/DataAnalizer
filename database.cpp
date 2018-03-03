@@ -249,6 +249,7 @@ void Database::generalExport(QString fileName)
     }
     getData.finish();
 }
+
 void Database::specificExport(QString fileName,QString SampleName,int rxnArea,int temp)
 {
     //query to export all data;
@@ -260,6 +261,31 @@ void Database::specificExport(QString fileName,QString SampleName,int rxnArea,in
     getData.addBindValue(SampleName);
 
     getData.addBindValue(temp);
+    getData.addBindValue(rxnArea);
+    getData.exec();
+    QFile file(fileName);
+    if(file.open(QIODevice::ReadWrite)){
+    QTextStream outputFile(&file);
+    while(getData.next())
+    {
+        outputFile << getData.value(0).toString()<<","<< getData.value(1).toInt()<<","<< getData.value(2).toInt()<< ","<<getData.value(3).toFloat()<<","<< getData.value(4).toInt()<<","<< getData.value(5).toFloat()<<","<< getData.value(6).toFloat()<<","<< getData.value(7).toFloat()<<"\n";
+    }
+    }else
+    {
+        qDebug()<<"File Error";
+    }
+
+    getData.finish();
+}
+void Database::specificExport(QString fileName,QString SampleName,int rxnArea)
+{
+    //query to export all data;
+    //select SampleName,temperature,replicantID,rxnTime,rxnArea,ln,T,stdDev from mydb.data join (mydb.trial, mydb.samples,mydb.temperatures) on (data.trialID=trial.idTrial and samples.idSamples = trial.sampleID and temperatures.idTemperatures= trial.temperatureid);
+    QSqlQuery getData(db);
+    getData.prepare("select SampleName,replicantID,rxnTime,rxnArea,ln,T,stdDev "
+                    "from mydb.data join (mydb.trial, mydb.samples) on "
+                    "(data.trialID=trial.idTrial and samples.idSamples = trial.sampleID ) where samples.SampleName=? and data.rxnArea=?;");
+    getData.addBindValue(SampleName);
     getData.addBindValue(rxnArea);
     getData.exec();
     QFile file(fileName);

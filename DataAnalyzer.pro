@@ -8,7 +8,7 @@ QT       += core gui
 QT       += sql
 QTPLUGIN += qsqlmysql
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
+LIBS+= C:\Program Files\MySQL\MySQL Connector C 6.1\lib
 TARGET = DataAnalyzer
 TEMPLATE = app
 

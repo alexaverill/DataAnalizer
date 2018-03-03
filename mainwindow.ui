@@ -32,7 +32,13 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="tempView"/>
+      <widget class="QComboBox" name="tempView">
+       <item>
+        <property name="text">
+         <string>All</string>
+        </property>
+       </item>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="label_6">

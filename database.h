@@ -27,6 +27,7 @@ public:
     void generalExport(QString fileName);
 
     void specificExport(QString fileName, QString SampleName, int rxnArea, int temp);
+    void specificExport(QString fileName, QString SampleName, int rxnArea);
 private:
     QSqlDatabase db;
     bool dbOpen = false;

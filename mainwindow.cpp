@@ -34,6 +34,7 @@ void MainWindow::setupTempDropBox()
 {
     Database db;
    QStringList temps = db.returnTemperatures();
+   temps.insert(0,"All");
    ui->tempEntryBox->addItems(temps);
    ui->tempView->addItems(temps);
 }
@@ -104,12 +105,13 @@ void MainWindow::on_ExportCSV_clicked()
     this->fileOut = QFileDialog::getSaveFileName(this,tr("Export to CSV"),"",tr("CSV (.csv)"));
     int rxnArea=ui->areaBox->value();
     QString sample= ui->compoundView->currentText();
-    int temp =ui->tempView->currentText().toInt();
     Database d;
-    //d.generalExport(fileOut);
-    d.specificExport(fileOut,sample,rxnArea,temp);
-    //check rest of form.
-    //then call appropriate export function
+    if(ui->tempView->currentText() == "All"){
+        d.specificExport(fileOut,sample,rxnArea);
+    }else{
+        int temp =ui->tempView->currentText().toInt();
+        d.specificExport(fileOut,sample,rxnArea,temp);
+    }
 }
 
 
