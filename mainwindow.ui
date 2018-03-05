@@ -77,6 +77,16 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="avgBtn">
+       <property name="text">
+        <string>Display Average</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="avgDisp"/>
+     </item>
     </layout>
    </widget>
    <widget class="QWidget" name="horizontalLayoutWidget">
@@ -162,11 +172,15 @@
       </layout>
      </item>
      <item>
-      <widget class="QPushButton" name="processData">
-       <property name="text">
-        <string>Process Data</string>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QPushButton" name="processData">
+         <property name="text">
+          <string>Process Data</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </widget>
@@ -259,7 +273,6 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpenSettings">
    <property name="text">
     <string>OpenSettings</string>

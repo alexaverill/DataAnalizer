@@ -120,3 +120,5 @@ void MainWindow::on_settings_clicked()
     settings set;
     set.exec();
 }
+
+

@@ -50,8 +50,8 @@ def main():
     lnList = []
     tList = []
     for element in dataList:
-        lnList.append(float(dataList[0][5]))
-        tList.append(float(dataList[0][6]))
+        lnList.append(float(dataList[0][6]))
+        tList.append(float(dataList[0][7]))
     x = np.array(lnList)
     y = np.array(tList)
  
