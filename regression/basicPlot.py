@@ -49,9 +49,13 @@ def main():
     print(len(dataList))
     lnList = []
     tList = []
+    x=0;
     for element in dataList:
-        lnList.append(float(dataList[0][6]))
-        tList.append(float(dataList[0][7]))
+        lnList.append(float(dataList[x][5]))
+        tList.append(float(dataList[x][6]))
+        x +=1
+    print(lnList);
+    print(tList);
     x = np.array(lnList)
     y = np.array(tList)
  

@@ -78,14 +78,14 @@
       </widget>
      </item>
      <item>
+      <widget class="QLineEdit" name="avgDisp"/>
+     </item>
+     <item>
       <widget class="QPushButton" name="avgBtn">
        <property name="text">
         <string>Display Average</string>
        </property>
       </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="avgDisp"/>
      </item>
     </layout>
    </widget>
@@ -172,7 +172,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
+      <layout class="QVBoxLayout" name="verticalLayout_6">
        <item>
         <widget class="QPushButton" name="processData">
          <property name="text">
@@ -180,7 +180,17 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QProgressBar" name="progressBar">
+         <property name="value">
+          <number>1</number>
+         </property>
+        </widget>
+       </item>
       </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_5"/>
      </item>
     </layout>
    </widget>

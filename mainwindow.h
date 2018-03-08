@@ -45,6 +45,8 @@ private slots:
 
     void on_settings_clicked();
 
+    void on_avgBtn_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

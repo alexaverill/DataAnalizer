@@ -172,11 +172,12 @@ bool Database::insertData(dataPoint *dP)
     query.finish();
     //close();
 }
-float Database::returnAvg(int SampleID, int temp, int rxnArea)
+float Database::returnAvg(QString SampleName, int temp, int rxnArea)
 {
     /*select avg(rxnTime) from mydb.trial left join(mydb.data)
     ON (trial.idtrial = data.trialID) where sampleID=1 AND temperatureID=1 and rxnArea=2;
     */
+    int SampleID = getSampleID(SampleName);
     QSqlQuery av(db);
     av.prepare("select avg(rxnTime) from mydb.trial left join(mydb.data)ON (trial.idtrial = data.trialID) where sampleID=? AND temperatureID=? and rxnArea=?;");
     av.addBindValue(SampleID);

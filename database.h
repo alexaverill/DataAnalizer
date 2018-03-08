@@ -28,7 +28,7 @@ public:
 
     void specificExport(QString fileName, QString SampleName, int rxnArea, int temp);
     void specificExport(QString fileName, QString SampleName, int rxnArea);
-    float returnAvg(int SampleID, int temp, int rxnArea);
+    float returnAvg(QString SampleName, int temp, int rxnArea);
 private:
     QSqlDatabase db;
     bool dbOpen = false;

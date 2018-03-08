@@ -55,7 +55,7 @@ void MainWindow::on_processData_clicked()
 {
 
     dataPoint dP;
-
+    ui->progressBar->setValue(10);
     dP.temperature = ui->tempEntryBox->currentText().toInt();
     dP.trial = ui->trialEntryBox->currentText().toInt();
     dP.compound = ui->sampleEntryBox->currentText();
@@ -65,16 +65,19 @@ void MainWindow::on_processData_clicked()
     }
     Data d(this->fileIn);
     d.processFile(&dP);
+    ui->progressBar->setValue(100);
 }
 
 void MainWindow::on_trialEntryBox_currentIndexChanged(int index)
 {
     this->dP.trial = index;
+    ui->progressBar->setValue(1);
 }
 
 void MainWindow::on_tempEntryBox_currentIndexChanged(int index)
 {
     this->dP.temperature = index;
+    ui->progressBar->setValue(1);
 }
 
 void MainWindow::on_trialEntryBox_activated(int index)
@@ -87,6 +90,7 @@ void MainWindow::on_selectFile_clicked()
 {
   this->fileIn = QFileDialog::getOpenFileName(this,tr("Open File"),"");
   ui->fileNameDisp->setText(fileIn);
+  ui->progressBar->setValue(1);
 }
 
 void MainWindow::on_sampleEntryBox_currentTextChanged(const QString &arg1)
@@ -122,3 +126,18 @@ void MainWindow::on_settings_clicked()
 }
 
 
+
+void MainWindow::on_avgBtn_clicked()
+{
+    Database d;
+    int rxnArea=ui->areaBox->value();
+    QString sample= ui->compoundView->currentText();
+
+    int temp =ui->tempView->currentText().toInt();
+    d.specificExport(fileOut,sample,rxnArea,temp);
+
+    float av = d.returnAvg(sample,temp,rxnArea);
+    qDebug()<<av;
+    QString dispAvg = QString::number(av);
+    ui->avgDisp->setText(dispAvg);
+}
