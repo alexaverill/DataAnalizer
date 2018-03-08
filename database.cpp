@@ -298,7 +298,7 @@ void Database::specificExport(QString fileName,QString SampleName,int rxnArea)
     //query to export all data;
     //select SampleName,temperature,replicantID,rxnTime,rxnArea,ln,T,stdDev from mydb.data join (mydb.trial, mydb.samples,mydb.temperatures) on (data.trialID=trial.idTrial and samples.idSamples = trial.sampleID and temperatures.idTemperatures= trial.temperatureid);
     QSqlQuery getData(db);
-    getData.prepare("select SampleName,replicantID,rxnTime,rxnArea,ln,T,stdDev "
+    getData.prepare("select SampleName,replicantID,rxnTemp,rxnTime,rxnArea,ln,T,stdDev "
                     "from mydb.data join (mydb.trial, mydb.samples) on "
                     "(data.trialID=trial.idTrial and samples.idSamples = trial.sampleID ) where samples.SampleName=? and data.rxnArea=?;");
     getData.addBindValue(SampleName);

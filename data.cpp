@@ -54,12 +54,12 @@ void Data::processFile(dataPoint *dP)
             if(roundedVal == target){
                 //insert into database.
                 dP->rxnTime = splitList.at(0).toFloat();
-                dP->rxnTemp = splitList.at(1).toFloat();
+                dP->rxnTemp = splitList.at(1).toFloat()+273.15;
                 dP->rxnHeat = splitList.at(2).toFloat();
                 dP->rxnRevCP = splitList.at(3).toFloat();
                 dP->rxnArea = (int) target;
                 dP->ln = qLn(dP->rxnTime);
-                dP->T = (1/(dP->rxnTemp+273.15));
+                dP->T = (1/(dP->rxnTemp));
 
                 db.insertData(dP);
                 place+=2;
