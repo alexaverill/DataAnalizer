@@ -35,9 +35,16 @@ The software shall be able to calculate average values for data
 
 The software shall have a user interface to facilitate data entry and export
 
-# Software Architecture
+The software shall be able to preform linear regression based on input data
 
+# Software Architecture
+The software architecture for this system is fairly simple, essentially it is an object oriented client server architecture. The client is the user interface that is used to enter and export the data, with the server being the MYSQL database that stores the data. 
+## Technologies
+This software is build using QT Widgets and C++ for the user interface, and uses a Mysql database for data storage.All C++ software was written using QT Creator and QT 5.10.0
+Additionally it uses python with numpy and scipy as well as the csv libaries to complete the linear regression.
 # Database Design
+The database design for this software is fairly simple, all data in this system is relational. The main relational breakdown  is that each row of data from the input file has a Compound, a Temperature, and a Trial.  The Compounds and temperatures are all predefined and  unchanging so they were given their own tables in order to limit data duplication. The trial table is created as data is entered and will store a trial id to reference a row of the input data as well as the compound and temperature id to reference the compounds and temperature tables. 
+
 
 # Software Implementation
 
