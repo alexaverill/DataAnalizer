@@ -10,7 +10,7 @@ Data::Data()
 }
 Data::Data(QString fileIn)
 {
-    qDebug() << "Entering Data Class with "+fileIn;
+    //qDebug() << "Entering Data Class with "+fileIn;
     setFile(fileIn);
 
 }
@@ -30,7 +30,7 @@ void Data::processFile(dataPoint *dP)
     bool header = true;
     int place = 2;
     QTextStream in(&file);
-    while(!in.atEnd())
+    while(!in.atEnd() && place <=100)
     {
         QString line =in.readLine();
         if(!header) // checking to see if the data in is part of the header, if it is we dont want to do anything on it.
@@ -51,7 +51,7 @@ void Data::processFile(dataPoint *dP)
             float inVal = splitList.at(4).toFloat();
             float roundedVal = floor(inVal * 10)/10;
             //printf("%2f\n",roundedVal);
-            if(roundedVal == target){
+            if(roundedVal >= target){
                 //insert into database.
                 dP->rxnTime = splitList.at(0).toFloat();
                 dP->rxnTemp = splitList.at(1).toFloat()+273.15;
@@ -70,7 +70,4 @@ void Data::processFile(dataPoint *dP)
             header = false;
         }
     }
-    //db.close();
-   // db.~Database();
-    //qDebug() << dP->trial;
 }

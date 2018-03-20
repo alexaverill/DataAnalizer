@@ -47,6 +47,8 @@ private slots:
 
     void on_avgBtn_clicked();
 
+    void on_calcAvg_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

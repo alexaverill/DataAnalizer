@@ -19,7 +19,7 @@ public:
     QStringList returnSamples();
     int getSampleID(QString compoundName);
     int getTempID(int temp);
-    float calculateAvg(int sampleID, int temp, int areaVal);
+    float calculateAvg();
 
     QList<int> returnTempID();
     QList<int> returnSampleID();

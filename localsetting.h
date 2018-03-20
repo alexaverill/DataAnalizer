@@ -13,9 +13,10 @@ public:
     void setHostName(QString host){host=host;}
     void setDatabaseName(QString dbName){databaseName=dbName;}
 private:
+    //edit these values to your database settings.
     QString username="";
     QString password="";
-    QString host="";
-    QString databaseName="";
+    QString host="localhost";
+    QString databaseName="mydb";
 };
 #endif // LOCALSETTING_H

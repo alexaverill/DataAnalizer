@@ -5,6 +5,7 @@
 #include<QVariant>
 #include <QSqlError>
 #include<QFile>
+#include<QtMath>
 #include "localsetting.h"
 Database::Database()
 {
@@ -185,8 +186,9 @@ float Database::returnAvg(QString SampleName, int temp, int rxnArea)
     av.addBindValue(rxnArea);
     av.exec();
     while(av.next()){
-        return av.value(0).toFloat();
+        qDebug() << av.value(0).toFloat();
     }
+    return 1;
 }
 void Database::setStdDev()
 {
@@ -242,14 +244,53 @@ ON (trial.idtrial = data.trialID) where sampleID=1 AND temperatureID=1 and rxnAr
     }
     //get TemperatureID
 }
-float Database::calculateAvg(int sampleID,int temp,int areaVal)
+float Database::calculateAvg()
 {
     /*SQL query to get average when given a sample, a temperature and then loop through to get values at each step.
      *
      * select AVG(rxnTime) from mydb.data where trialID in
      *  (select idTrial from mydb.trial where sampleID=1 and temperatureID=1) and rxnArea=4;
      * */
+    //calculate entire average for all samples, temperatures and areas;
+    QList<int> sampleID = returnSampleID();
+    QList<int> tempID = returnTempID();
+    for(auto x: sampleID)
+    {
 
+        for(auto t: tempID)
+        {
+            qDebug()<< x << t;
+            // get a QList of idTrials from the trials table and then iterate through that to update StdDeviation
+            QSqlQuery trials(db);
+            trials.prepare("SELECT idTrial from trial where sampleID=? and temperatureID=?");
+            trials.addBindValue(x);
+            trials.addBindValue(t);
+            trials.exec();
+            while(trials.next())
+            {
+                int trialID = trials.value(0).toInt();
+                for(int z=2;z<=100;z+=2)
+                {
+                    //loop through and calculate standard deviation of each item.
+                    //There really should be a better way to do this. I know that it has to exist.
+                    QSqlQuery update(db);
+                    update.prepare("update data set average=(select avg(rxnTime)"
+                                   "as dev  from trial join(SELECT * FROM data)as data ON (trial.idtrial = data.trialID) where sampleID=? "
+                                   "AND temperatureID=? and rxnArea=?) where trialID=? and rxnArea=?");
+                    update.addBindValue(x);
+                    update.addBindValue(t);
+                    update.addBindValue(z);
+                    update.addBindValue(trialID);
+                    update.addBindValue(z);
+                    //now pray.
+                    update.exec();
+                }
+            }
+
+
+
+        }
+    }
     return 0;
 }
 void Database::generalExport(QString fileName)
@@ -257,11 +298,11 @@ void Database::generalExport(QString fileName)
     //query to export all data;
     //select SampleName,temperature,replicantID,rxnTime,rxnArea,ln,T,stdDev from mydb.data join (mydb.trial, mydb.samples,mydb.temperatures) on (data.trialID=trial.idTrial and samples.idSamples = trial.sampleID and temperatures.idTemperatures= trial.temperatureid);
     QSqlQuery getData(db);
-    getData.prepare("select SampleName,replicantID,temperature,rxnTime,rxnArea,ln,T,stdDev from mydb.data join (mydb.trial, mydb.samples,mydb.temperatures) on (data.trialID=trial.idTrial and samples.idSamples = trial.sampleID and temperatures.idTemperatures= trial.temperatureid);");
+    getData.prepare("select SampleName,replicantID,temperature,rxnTime,rxnArea,ln,T,average,stdDev from mydb.data join (mydb.trial, mydb.samples,mydb.temperatures) on (data.trialID=trial.idTrial and samples.idSamples = trial.sampleID and temperatures.idTemperatures= trial.temperatureid);");
     getData.exec();
     while(getData.next())
     {
-        qDebug() << getData.value(0).toString()<<","<< getData.value(1).toInt()<<","<< getData.value(2).toInt()<< ","<<getData.value(3).toFloat()<<","<< getData.value(4).toInt()<<","<< getData.value(5).toFloat()<<","<< getData.value(6).toFloat()<<","<< getData.value(7).toFloat()<<"\n";
+        qDebug() << getData.value(0).toString()<<","<< getData.value(1).toInt()<<","<< getData.value(2).toInt()<< ","<<getData.value(3).toFloat()<<","<< getData.value(4).toInt()<<","<< getData.value(5).toFloat()<<","<< getData.value(6).toFloat()<<","<< getData.value(7).toFloat()<<","<< getData.value(8).toFloat()<<","<< qLn(getData.value(7).toFloat())<<"\n";
     }
     getData.finish();
 }
@@ -271,7 +312,7 @@ void Database::specificExport(QString fileName,QString SampleName,int rxnArea,in
     //query to export all data;
     //select SampleName,temperature,replicantID,rxnTime,rxnArea,ln,T,stdDev from mydb.data join (mydb.trial, mydb.samples,mydb.temperatures) on (data.trialID=trial.idTrial and samples.idSamples = trial.sampleID and temperatures.idTemperatures= trial.temperatureid);
     QSqlQuery getData(db);
-    getData.prepare("select SampleName,replicantID,temperature,rxnTime,rxnArea,ln,T,stdDev "
+    getData.prepare("select SampleName,replicantID,temperature,rxnTime,rxnArea,ln,T,average,stdDev "
                     "from mydb.data join (mydb.trial, mydb.samples,mydb.temperatures) on "
                     "(data.trialID=trial.idTrial and samples.idSamples = trial.sampleID and temperatures.idTemperatures= trial.temperatureid) where samples.SampleName=? and temperatures.temperature=? and data.rxnArea=?;");
     getData.addBindValue(SampleName);
@@ -284,7 +325,7 @@ void Database::specificExport(QString fileName,QString SampleName,int rxnArea,in
     QTextStream outputFile(&file);
     while(getData.next())
     {
-        outputFile << getData.value(0).toString()<<","<< getData.value(1).toInt()<<","<< getData.value(2).toInt()<< ","<<getData.value(3).toFloat()<<","<< getData.value(4).toInt()<<","<< getData.value(5).toFloat()<<","<< getData.value(6).toFloat()<<","<< getData.value(7).toFloat()<<"\n";
+        outputFile << getData.value(0).toString()<<","<< getData.value(1).toInt()<<","<< getData.value(2).toInt()<< ","<<getData.value(3).toFloat()<<","<< getData.value(4).toInt()<<","<< getData.value(5).toFloat()<<","<< getData.value(6).toFloat()<<","<< getData.value(7).toFloat()<<","<< getData.value(8).toFloat()<<","<< qLn(getData.value(7).toFloat())<<"\n";
     }
     }else
     {
@@ -298,7 +339,7 @@ void Database::specificExport(QString fileName,QString SampleName,int rxnArea)
     //query to export all data;
     //select SampleName,temperature,replicantID,rxnTime,rxnArea,ln,T,stdDev from mydb.data join (mydb.trial, mydb.samples,mydb.temperatures) on (data.trialID=trial.idTrial and samples.idSamples = trial.sampleID and temperatures.idTemperatures= trial.temperatureid);
     QSqlQuery getData(db);
-    getData.prepare("select SampleName,replicantID,rxnTemp,rxnTime,rxnArea,ln,T,stdDev "
+    getData.prepare("select SampleName,replicantID,rxnTemp,rxnTime,rxnArea,ln,T,average,stdDev "
                     "from mydb.data join (mydb.trial, mydb.samples) on "
                     "(data.trialID=trial.idTrial and samples.idSamples = trial.sampleID ) where samples.SampleName=? and data.rxnArea=?;");
     getData.addBindValue(SampleName);
@@ -309,7 +350,7 @@ void Database::specificExport(QString fileName,QString SampleName,int rxnArea)
     QTextStream outputFile(&file);
     while(getData.next())
     {
-        outputFile << getData.value(0).toString()<<","<< getData.value(1).toInt()<<","<< getData.value(2).toInt()<< ","<<getData.value(3).toFloat()<<","<< getData.value(4).toInt()<<","<< getData.value(5).toFloat()<<","<< getData.value(6).toFloat()<<","<< getData.value(7).toFloat()<<"\n";
+        outputFile << getData.value(0).toString()<<","<< getData.value(1).toInt()<<","<< getData.value(2).toInt()<< ","<<getData.value(3).toFloat()<<","<< getData.value(4).toInt()<<","<< getData.value(5).toFloat()<<","<< getData.value(6).toFloat()<<","<< getData.value(7).toFloat()<<","<< getData.value(8).toFloat()<<","<< qLn(getData.value(7).toFloat())<<"\n";
     }
     }else
     {

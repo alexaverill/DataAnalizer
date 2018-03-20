@@ -100,8 +100,10 @@ void MainWindow::on_sampleEntryBox_currentTextChanged(const QString &arg1)
 
 void MainWindow::on_pushButton_2_clicked()
 {
+    ui->stdBar->setValue(10);
     Database d;
     d.setStdDev();
+    ui->stdBar->setValue(100);
 }
 
 void MainWindow::on_ExportCSV_clicked()
@@ -134,10 +136,16 @@ void MainWindow::on_avgBtn_clicked()
     QString sample= ui->compoundView->currentText();
 
     int temp =ui->tempView->currentText().toInt();
-    d.specificExport(fileOut,sample,rxnArea,temp);
-
     float av = d.returnAvg(sample,temp,rxnArea);
     qDebug()<<av;
     QString dispAvg = QString::number(av);
     ui->avgDisp->setText(dispAvg);
+}
+
+void MainWindow::on_calcAvg_clicked()
+{
+    ui->avgBar->setValue(10);
+    Database d;
+    d.calculateAvg();
+    ui->avgBar->setValue(100);
 }

@@ -12,8 +12,8 @@ struct dataPoint
     float rxnHeat;
     float rxnRevCP;
     int rxnArea;
-    float ln;
-    float T;
+    float ln; // calculated from LN(rxnTemp)
+    float T; // calculated as LN(1/rxnTime).
 
 };
 
