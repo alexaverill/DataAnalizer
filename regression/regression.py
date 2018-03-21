@@ -11,11 +11,12 @@ while True:
 	print(len(dataList))
 	lnList = []
 	tList = []
-	x=0;
-	for element in dataList:
-	    lnList.append(float(dataList[x][6]))
-	    tList.append(float(dataList[x][9]))
-	    x +=1
+	y=1;
+	for x in range(1,len(dataList)-1):
+		print(dataList[x])
+		lnList.append(float(dataList[y][6]))
+		tList.append(float(dataList[y][9]))
+		y +=1
 	print(lnList);
 	print(tList);
 	y = np.array(lnList)

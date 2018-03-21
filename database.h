@@ -10,7 +10,6 @@ class Database
 {
 public:
     Database();
-    //~Database();
     bool insertData(dataPoint *);
     bool connect();
     void close();
