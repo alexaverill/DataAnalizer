@@ -11,9 +11,8 @@ while True:
 	print(len(dataList))
 	lnList = []
 	tList = []
-	y=1;
-	for x in range(1,len(dataList)-1):
-		print(dataList[x])
+	y=0;
+	for element in dataList:
 		lnList.append(float(dataList[y][6]))
 		tList.append(float(dataList[y][9]))
 		y +=1
