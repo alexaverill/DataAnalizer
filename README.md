@@ -74,15 +74,59 @@ struct dataPoint
 };
 ```
 
-The main point of work in the Data Input setp was to only read data that occured at a specific point of the Reaction Area. In our case this was every time the reaction area increased by 2%. To find when we needed to record a data point the file was looped through and every row had its reaction area rounded to two decimal points and then compared to a target value. If the rounded value was greater or equal to the target value it was stored in the database, and then the target value was incremeted by 2. 
-Additionally the Natural Log of reaction time and the inverse of the reaction temperature were calculated prior to the data being stored in the databsase. 
+The main point of work in the Data Input setp was to only read data that occured at a specific point of the Reaction Area. In our case this was every time the reaction area increased by 2%, essentially the goal was to pull data at 2%,4%,6%,...,98%, 100%. 
+
+To find when we needed to record a data point the file was looped through and every row had its reaction area rounded to two decimal points and then compared to a target value. 
+```
+            float target = (float)place;
+            float inVal = splitList.at(4).toFloat();
+            float roundedVal = floor(inVal * 10)/10;
+            //printf("%2f\n",roundedVal);
+            if(roundedVal >= target){
+                //insert into database.
+                dP->rxnTime = splitList.at(0).toFloat();
+                dP->rxnTemp = splitList.at(1).toFloat()+273.15;
+                dP->rxnHeat = splitList.at(2).toFloat();
+                dP->rxnRevCP = splitList.at(3).toFloat();
+                dP->rxnArea = (int) target;
+                dP->ln = qLn(dP->rxnTime);
+                dP->T = (1/(dP->rxnTemp));
+
+                db.insertData(dP);
+                place+=2;
+}
+```
+If the rounded value was greater or equal to the target value its rows were pushed into the Data Point Struct, the reaction temperature was incremented by 273.15 (to convert to Kelvin), the Natural Log of reaction temperature, and the inverse of reaction time were calculated and stored. Finally the data was pushed into the Database and stored. 
 
 ## Calculating Standard Deviation and Averages of Trials
+The calculation of the Standard Deviation and the average of the trials is a user requested action that can be done after the required data has been entered. Once the user clicks the button they call setStdDev in the Database Class. setStdDev pulls a list of samples and temperatures, then loops through samples and for every temperature in that sample it will calculate the standard deviation at every percentage. 
+
+SQL Query: 
+```
+update data set stdDev=(select * from(SELECT (sqrt(1/3)*pow(rxnTime-(select avg(rxnTime) as dev from trial left join(data) ON (trial.idtrial = data.trialID) where sampleID=? AND temperatureID=? and rxnArea=?),2)) from mydb.data where trialID=? and rxnArea=?) as x) where trialID=? and rxnArea=?"
+```
+
+Calculating the average follows the same pattern as the calculation of the Standard Deviation, the main reason that is is a seperate process was to simplify implementation to reach the required deadline for functional software. 
+```
+update data set average=(select avg(rxnTime) as dev  from trial join(SELECT * FROM data)as data ON (trial.idtrial = data.trialID) where sampleID=? AND temperatureID=? and rxnArea=?) where trialID=? and rxnArea=?")
+
+```
 
 ## Exporting Data
+Exporting data is teh exact oposite of the data inport, the end user will select a temperature, a compound, and a reaction aread and the matching data will be exported into a CSV file that can then be used in Linear Regression. The output data will have the following columns in the CSV:
+```
+SampleName,replicantID,temperature,rxnTime,rxnArea,ln,T,average,stdDev
+```
+The two main methods of export are to export based on Sample Name, Reaction Area, and Temperature, or to export based on Sample Name and Reaction Area for every temperature for that sample and area. 
 
 ## Linear Regression
-
+The linear regression of this data was implemented using SciPy, Numpy, and the CSV libraries in python. Python was chosen due to the pre-existing and verified Linear Regression libraries that exist rather then trying to reinvent the wheel. The linear regression code can be found here: https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.stats.linregress.html 
+The only main changes in this program was the inclusion of importing the data from the outputted CSV file from the previous step.
 ## Helper SQL Scripts
 
 # Testing
+# Areas of Improvement
+Database duplication is currently allowed 
+Delete data from UI
+implement helper SQL scripts into program
+Improve User Interface
