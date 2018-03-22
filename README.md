@@ -38,12 +38,12 @@ The software shall have a user interface to facilitate data entry and export
 The software shall be able to preform linear regression based on input data
 
 # Software Architecture
-The software architecture for this system is fairly simple, essentially it is an object oriented client server architecture. The client is the user interface that is used to enter and export the data, with the server being the MYSQL database that stores the data. 
+The software architecture for this system is essentially an object oriented client server architecture. The client is the user interface that is used to enter and export the data, with the server being the MYSQL database that stores the data. 
 ## Technologies
 This software is build using QT Widgets and C++ for the user interface, and uses a Mysql database for data storage.All C++ software was written using QT Creator and QT 5.10.0
 Additionally it uses python with numpy and scipy as well as the csv libaries to complete the linear regression.
 # Database Design
-The database design for this software is fairly simple, all data in this system is relational. 
+The database design for this software is based on the fact that all data in this system is relational. 
 
 ![Database Diagram](https://github.com/alexaverill/DataAnalyzer/blob/master/databaseDiagram.PNG?raw=true)
 The main relations in the data are each individual row of data is related to a Compound, a Temperature and a Trial. Due to this the database was broken down into a Samples and Temperatures table, a trial table that maps a Temperature and Sample to a trial, and then a data table which is an individual row of data mapped to a trial. 
