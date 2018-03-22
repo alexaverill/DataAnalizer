@@ -123,10 +123,69 @@ The two main methods of export are to export based on Sample Name, Reaction Area
 The linear regression of this data was implemented using SciPy, Numpy, and the CSV libraries in python. Python was chosen due to the pre-existing and verified Linear Regression libraries that exist rather then trying to reinvent the wheel. The linear regression code can be found here: https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.stats.linregress.html 
 The only main changes in this program was the inclusion of importing the data from the outputted CSV file from the previous step.
 ## Helper SQL Scripts
+After the initial development there was a few extra database operations that were needed to help with data processing. 
+### Deleting Data
+Data can be deleted based on the Sample Name as well as the Temperature. Edit the SampleName= or the Temperature = to delete specific data. 
+First run this script to remove data in the data table:
+```
+delete from data where trialID in (select idTrial from trial where temperatureID=(select idTemperatures from temperatures where temperature=130) and SampleID=(select idSamples from samples where SampleName="Sigma"));
+```
 
-# Testing
+Then run this to clear data from the Trial Table:
+```
+delete from trial where temperatureID=(select idTemperatures from temperatures where temperature=130) and SampleID=(select idSamples from samples where SampleName="Sigma")
+```
+### Displaying Data
+Display all data based on samplename, temperature and area
+```
+select * from mydb.trial join(mydb.data, mydb.temperatures, mydb.samples)
+ON (trial.idtrial = data.trialID and trial.temperatureID = temperatures.idTemperatures and trial.sampleID = samples.idSamples)
+where SampleName="Sigma" AND temperature=130 and rxnArea=2;
+```
+Get all by Sample Name and Temp:
+```
+select * from mydb.trial join(mydb.data, mydb.temperatures, mydb.samples)
+ON (trial.idtrial = data.trialID and trial.temperatureID = temperatures.idTemperatures and trial.sampleID = samples.idSamples)
+where SampleName="Sigma" AND temperature=130
+```
+Get all by sample:
+```
+select * from mydb.trial join(mydb.data, mydb.temperatures, mydb.samples)
+ON (trial.idtrial = data.trialID and trial.temperatureID = temperatures.idTemperatures and trial.sampleID = samples.idSamples)
+where SampleName="Sigma"
+```
+Get by Sample ordered by temperature:
+```
+select * from mydb.trial join(mydb.data, mydb.temperatures, mydb.samples)
+ON (trial.idtrial = data.trialID and trial.temperatureID = temperatures.idTemperatures and trial.sampleID = samples.idSamples)
+where SampleName="Sigma" order by temperatureID ASC
+```
+By Sample grouped by rxnArea
+```
+select * from mydb.trial join(mydb.data, mydb.temperatures, mydb.samples)
+ON (trial.idtrial = data.trialID and trial.temperatureID = temperatures.idTemperatures and trial.sampleID = samples.idSamples)
+where SampleName="Sigma" order by rxnArea ASC
+```
+Just get all data:
+```
+select * from mydb.trial join(mydb.data, mydb.temperatures, mydb.samples)
+ON (trial.idtrial = data.trialID and trial.temperatureID = temperatures.idTemperatures and trial.sampleID = samples.idSamples) 
+```
+Selecting Data not at a temperature
+```
+select SampleName,replicantID,rxnTemp,rxnTime,rxnArea,ln,T,average,stdDev from mydb.data join (mydb.trial, mydb.samples,mydb.temperatures) on (data.trialID=trial.idTrial and samples.idSamples = trial.sampleID
+and temperatures.idTemperatures= trial.temperatureid) where samples.SampleName="Sigma" and temperatures.temperature<>130 and data.rxnArea=2;
+```
+### Converting all data from Celcius to Kelvin 
+One challenge was realizing that all data was in the wrong units for the initial inputs. To convert all that data to Kelvin this script could be used, also it could be used to convert it back to Celcius by subtracting the 273.15
+
+```
+UPDATE data set rxnTemp = rxnTemp+273.15
+```
+After the temperature is updated the Inverse of Temperature needs to be recalculated:
+```
+UPDATE data set T = 1/rxnTemp;
+```
+
 # Areas of Improvement
-Database duplication is currently allowed 
-Delete data from UI
-implement helper SQL scripts into program
-Improve User Interface
+This project went fairly smoothly but as in every project there are areas of improvement. The first being extending the Data base class to not allow data duplication, currently it is possible to enter the same data twice. This would be the first issue to fix. Secondly it would be good to implement most of the SQL helper queries that are listed above into the User Interface to simplify the end users experiance. Along those same lines it would be good to implement a data viewer into the user interface to keep the user from having to use both this program as well as MYSQL workbench. 
