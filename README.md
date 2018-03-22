@@ -45,7 +45,7 @@ Additionally it uses python with numpy and scipy as well as the csv libaries to 
 # Database Design
 The database design for this software is fairly simple, all data in this system is relational. 
 
-![Database Diagram](https://raw.githubusercontent.com/alexaverill/DataAnalyzer/databaseDiagram.PNG)
+![Database Diagram](https://github.com/alexaverill/DataAnalyzer/blob/master/databaseDiagram.PNG?raw=true)
 The main relations in the data are each individual row of data is related to a Compound, a Temperature and a Trial. Due to this the database was broken down into a Samples and Temperatures table, a trial table that maps a Temperature and Sample to a trial, and then a data table which is an individual row of data mapped to a trial. 
 
 
